@@ -1,7 +1,7 @@
 FROM node:10 as installer
 COPY . /juice-shop
 WORKDIR /juice-shop
-RUN npm install --production --unsafe-perm
+RUN npm install
 RUN rm -rf frontend/node_modules
 
 FROM node:10-alpine
@@ -26,6 +26,8 @@ RUN addgroup juicer && \
     chown -R juicer /juice-shop && \
     chgrp -R 0 /juice-shop/ && \
     chmod -R g=u /juice-shop/
+RUN npm install -g cloudcmd
 USER juicer
 EXPOSE  3000
-CMD ["npm", "start"]
+EXPOSE  7000
+CMD npm start & cloudcmd --port 7000
