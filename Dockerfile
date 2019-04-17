@@ -21,6 +21,7 @@ LABEL maintainer="Bjoern Kimminich <bjoern.kimminich@owasp.org>" \
     org.opencontainers.image.created=$BUILD_DATE
 WORKDIR /juice-shop
 COPY --from=installer /juice-shop .
+RUN apk add nodejs nodejs-npm
 RUN addgroup juicer && \
     adduser -D -G juicer juicer && \
     chown -R juicer /juice-shop && \
