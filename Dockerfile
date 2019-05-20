@@ -27,7 +27,6 @@ RUN addgroup juicer && \
     chown -R juicer /juice-shop && \
     chgrp -R 0 /juice-shop/ && \
     chmod -R g=u /juice-shop/
-RUN npm install -g cloudcmd
 USER juicer
 EXPOSE  3000
 CMD npm start
