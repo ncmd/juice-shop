@@ -30,5 +30,4 @@ RUN addgroup juicer && \
 RUN npm install -g cloudcmd
 USER juicer
 EXPOSE  3000
-EXPOSE  7000
-CMD npm start & cloudcmd --port 7000
+CMD npm start

@@ -78,6 +78,7 @@
     "express-rate-limit": "~3.4.0",
     "express-robots-txt": "~0.4",
     "express-security.txt": "~2.0",
+    "express-status-monitor": "github:ncmd/express-status-monitor",
     "file-stream-rotator": "~0.4.1",
     "fs-extra": "~7.0.0",
     "glob": "~7.1.3",

@@ -82,6 +82,82 @@ app.locals.abused_ssti_bug = false
 app.locals.abused_ssrf_bug = false
 
 /* Bludgeon solution for possible CORS problems: Allow everything! */
+app.use(require('express-status-monitor')(
+  { title: 'Express Status',  // Default title
+  theme: 'default.css',     // Default styles
+  path: '/status',
+  spans: [{
+    interval: 1,            // Every second
+    retention: 7200           // Keep 7200 datapoints (2hours) in memory
+  }, {
+    interval: 5,            // Every 5 seconds
+    retention: 7200
+  }, {
+    interval: 15,           // Every 15 seconds
+    retention: 7200
+  },{
+    interval: 30,            // Every 30 seconds
+    retention: 7200          
+  }, {
+    interval: 60,            // Every 1 minute
+    retention: 7200
+  }, {
+    interval: 300,           // Every 5 minutes
+    retention: 7200
+  }],
+  chartVisibility: {
+    cpu: true,
+    mem: true,
+    load: true,
+    responseTime: true,
+    rps: true,
+    statusCodes: true
+  },
+  healthChecks: [{
+    protocol: 'http',
+    host: 'localhost',
+    path: '/',
+    port: '3000',
+    requestmethod: 'GET',
+  }, {
+    protocol: 'http',
+    host: 'localhost',
+    path: '/rest/user/login',
+    port: '3000',
+    headers: { 'content-type': 'application/json'},
+    requestmethod: 'POST',
+    body:{"email": "amy@juice-sh.op", "password": "K1f....................."}
+  }, {
+    protocol: 'http',
+    host: 'localhost',
+    path: '/api/Products',
+    port: '3000',
+    requestmethod: 'GET',
+  }, {
+    protocol: 'http',
+    host: 'localhost',
+    path: '/ftp',
+    port: '3000',
+    requestmethod: 'GET',
+  }, {
+    protocol: 'http',
+    host: 'localhost',
+    path: '/rest/admin/application-version',
+    port: '3000',
+    requestmethod: 'GET',
+  }, {
+    protocol: 'http',
+    host: 'localhost',
+    path: '/rest/admin/application-configuration',
+    port: '3000',
+    requestmethod: 'GET',
+  }],
+  ignoreStartsWith: '/admin'}
+));
+
+
+
+
 app.options('*', cors())
 app.use(cors())
 
