@@ -29,4 +29,4 @@ RUN addgroup juicer && \
     chmod -R g=u /juice-shop/
 USER juicer
 EXPOSE  3000
-CMD npm start
+CMD DEBUG=express:* node app.js
