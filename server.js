@@ -106,8 +106,6 @@ app.use((req, res, next) => {
   next()
 })
 
-app.use()
-
 /* Security Policy */
 app.get('/.well-known/security.txt', verify.accessControlChallenges())
 app.use('/.well-known/security.txt', securityTxt({
